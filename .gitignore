@@ -1,0 +1,6 @@
+.ipynb_checkpoints
+correct_images
+csv
+*.zip
+*.hdf5
+*.npy
