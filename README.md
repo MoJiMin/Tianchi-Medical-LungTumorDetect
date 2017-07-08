@@ -8,9 +8,7 @@
 
 ## Feature Engineering
 
-![1origin]('assets/1 origin.png')
-
-<img src="./assets/1 origin.png" width="250">
+<img src="./assets/1 origin.png">
 
 ### 坐标变换
 
@@ -28,7 +26,8 @@ mean, std = np.mean(img), np.std(img)
 img = (img - mean) / std
 ```
 
-![](assets/2 norm.png)
+<img src="./assets/2 norm.png">
+
 
 ### 黑白(0/1)转化
 
@@ -40,7 +39,7 @@ mask = np.where(mask>=threshold, 1.0, 0.0)
 
 通过Kmeans把image划分为2个cluster，然后找到centroid均值，做划分
 
-![](assets/3 Kmeans.png)
+<img src="./assets/3 Kmeans.png">
 
 ### dilation & erosion
 
@@ -51,9 +50,9 @@ mask = morphology.erosion(mask, np.ones([24, 24]))
 
 这里4和24是通过不断尝试找到的合理值。
 
-![](assets/4 dilation.png)
+<img src="./assets/4 dilation.png">
 
-![](assets/5 erosion.png)
+<img src="./assets/5 erosion.png">
 
 ### Label Region
 
@@ -64,76 +63,75 @@ regions = measure.regionprops(labeled_mask)
 
 得到连续的肺的mask，排除身体周围等其他连续区域mask
 
-![](assets/6 lung mask.png)
+<img src="./assets/6 lung mask.png">
 
-![](assets/7 lung by mask.png)
+<img src="./assets/7 lung by mask.png">
 
 ### 聚焦
 
 把图像放大到肺部，并保持图像size不变
 
-![](assets/8 transformed img.png)
+<img src="./assets/8 transformed img.png">
 
-![](assets/9 transformed tumor mask.png)
+<img src="./assets/9 transformed tumor mask.png">
 
 ## U-Net神经网络
 
 定义U-Net神经网络
 
 ```
-    inputs = Input((1, img_rows, img_cols))
-    conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(inputs)
-    #       Conv2D(32, (3, 3), activation="relu", padding="same")
+inputs = Input((1, img_rows, img_cols))
+conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(inputs)
+#       Conv2D(32, (3, 3), activation="relu", padding="same")
 
-    conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv1)
-    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
+conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv1)
+pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
 
-    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(pool1)
-    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv2)
-    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
+conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(pool1)
+conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv2)
+pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
 
-    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)
-    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv3)
-    pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
+conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)
+conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv3)
+pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
 
-    conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(pool3)
-    conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv4)
-    pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
+conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(pool3)
+conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv4)
+pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
 
-    conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(pool4)
-    conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(conv5)
+conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(pool4)
+conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(conv5)
 
-    up6 = concatenate([UpSampling2D(size=(2, 2))(conv5), conv4], axis=1)
-    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(up6)
-    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv6)
+up6 = concatenate([UpSampling2D(size=(2, 2))(conv5), conv4], axis=1)
+conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(up6)
+conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv6)
 
-    up7 = concatenate([UpSampling2D(size=(2, 2))(conv6), conv3], axis=1)
-    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(up7)
-    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv7)
+up7 = concatenate([UpSampling2D(size=(2, 2))(conv6), conv3], axis=1)
+conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(up7)
+conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv7)
 
-    up8 = concatenate([UpSampling2D(size=(2, 2))(conv7), conv2], axis=1)
-    conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(up8)
-    conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv8)
+up8 = concatenate([UpSampling2D(size=(2, 2))(conv7), conv2], axis=1)
+conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(up8)
+conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv8)
 
-    up9 = concatenate([UpSampling2D(size=(2, 2))(conv8), conv1], axis=1)
-    conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(up9)
-    conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
+up9 = concatenate([UpSampling2D(size=(2, 2))(conv8), conv1], axis=1)
+conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(up9)
+conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
 
-    conv10 = Conv2D(1, (1, 1), activation='sigmoid')(conv9)
+conv10 = Conv2D(1, (1, 1), activation='sigmoid')(conv9)
 
-    model = Model(inputs=inputs, outputs=conv10)
+model = Model(inputs=inputs, outputs=conv10)
 
-    model.compile(optimizer=Adam(lr=1.0e-5), loss=dice_coef_loss, metrics=[dice_coef])
+model.compile(optimizer=Adam(lr=1.0e-5), loss=dice_coef_loss, metrics=[dice_coef])
 ```
 
 确定lost function为y_truth和y_pred的重叠区域*2，除以2个区域的"面积"和。
 
 ```
-    y_true_f = K.flatten(y_true)
-    y_pred_f = K.flatten(y_pred)
-    intersection = K.sum(y_true_f * y_pred_f)
-    return -(2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
-
+y_true_f = K.flatten(y_true)
+y_pred_f = K.flatten(y_pred)
+intersection = K.sum(y_true_f * y_pred_f)
+return -(2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
 ```
 
 # 3D卷积神经网络
