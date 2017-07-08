@@ -8,7 +8,7 @@
 
 ## Feature Engineering
 
-![](./assets/1 origin.png)
+![](assets/1 origin.png)
 
 ### 坐标变换
 
@@ -26,7 +26,7 @@ mean, std = np.mean(img), np.std(img)
 img = (img - mean) / std
 ```
 
-![](./assets/2 norm.png)
+![](assets/2 norm.png)
 
 ### 黑白(0/1)转化
 
@@ -38,7 +38,7 @@ mask = np.where(mask>=threshold, 1.0, 0.0)
 
 通过Kmeans把image划分为2个cluster，然后找到centroid均值，做划分
 
-![](./assets/3 Kmeans.png)
+![](assets/3 Kmeans.png)
 
 ### dilation & erosion
 
@@ -49,9 +49,9 @@ mask = morphology.erosion(mask, np.ones([24, 24]))
 
 这里4和24是通过不断尝试找到的合理值。
 
-![](./assets/4 dilation.png)
+![](assets/4 dilation.png)
 
-![](./assets/5 erosion.png)
+![](assets/5 erosion.png)
 
 ### Label Region
 
@@ -62,17 +62,17 @@ regions = measure.regionprops(labeled_mask)
 
 得到连续的肺的mask，排除身体周围等其他连续区域mask
 
-![](./assets/6 lung mask.png)
+![](assets/6 lung mask.png)
 
-![](./assets/7 lung by mask.png)
+![](assets/7 lung by mask.png)
 
 ### 聚焦
 
 把图像放大到肺部，并保持图像size不变
 
-![](./assets/8 transformed img.png)
+![](assets/8 transformed img.png)
 
-![](./assets/9 transformed tumor mask.png)
+![](assets/9 transformed tumor mask.png)
 
 ## U-Net神经网络
 
