@@ -8,7 +8,9 @@
 
 ## Feature Engineering
 
-![](assets/1 origin.png)
+![1origin]('assets/1 origin.png')
+
+<img src="./assets/1 origin.png" width="250">
 
 ### 坐标变换
 
